@@ -3,6 +3,7 @@ import http from 'http'
 import express from 'express'
 import userrouter from './routes/user.routes.js';
 import { connectDB } from './db/connection.db.js';
+import cookieParser from 'cookie-parser';
 import cors from 'cors';
 
 
@@ -16,6 +17,7 @@ app.use(cors({
     credentials: true,
 }));
 app.use(express.json());
+app.use(cookieParser());
 
 const PORT = process.env.PORT || 3000;
 

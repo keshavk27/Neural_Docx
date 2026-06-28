@@ -211,7 +211,6 @@ export const resendOTP = asyncHandler(async (req, res) => {
 });
 
 
-
 export const loginUser = asyncHandler(async (req, res) => {
 
     const { email, password } = req.body;
@@ -275,6 +274,33 @@ export const loginUser = asyncHandler(async (req, res) => {
                     
                 },
                 "Login successful."
+            )
+        );
+});
+
+export const logoutUser = asyncHandler(async (req, res) => {
+
+    await User.findByIdAndUpdate(
+        req.user._id,
+        {
+            $set: {
+                refreshToken: "",
+            },
+        },
+        {
+            new: true,
+        }
+    );
+
+    return res
+        .status(200)
+        .clearCookie("accessToken", accessCookieOptions)
+        .clearCookie("refreshToken", refreshCookieOptions)
+        .json(
+            new ApiResponse(
+                200,
+                {},
+                "User logged out successfully."
             )
         );
 });
