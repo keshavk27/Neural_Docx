@@ -5,6 +5,8 @@ import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import { createOTP } from "../services/otp.service.js";
 import { sendOTPEmail } from "../services/mail.service.js";
+import {accessCookieOptions,refreshCookieOptions,} from "../utils/cookie.utils.js";
+import { generateAccessAndRefreshTokens } from "../utils/tokens.utils.js";
 
 export const registerUser = asyncHandler(async (req, res) => {
     const { fullname, username, email, password } = req.body;
@@ -117,7 +119,7 @@ export const verifyOTP = asyncHandler(async (req, res) => {
     });
 
     if (!otpRecord) {
-        throw new ApiError(404, "OTP is not valid. Please request a new OTP.");
+        throw new ApiError(400, "Invalid OTP. Please request a new OTP.");
     }
 
     // Check expiry
@@ -206,4 +208,73 @@ export const resendOTP = asyncHandler(async (req, res) => {
             "A new OTP has been sent to your registered email."
         )
     );
+});
+
+
+
+export const loginUser = asyncHandler(async (req, res) => {
+
+    const { email, password } = req.body;
+
+    // Validate
+    if (!email || !password) {
+        throw new ApiError(400, "Email and password are required.");
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+
+    // Find user
+    const user = await User.findOne({
+        email: normalizedEmail,
+    });
+
+    if (!user) {
+        throw new ApiError(401, "User not found.");
+    }
+
+    // Verify email
+    if (!user.isVerified) {
+        throw new ApiError(
+            403,
+            "Please verify your email before logging in."
+        );
+    }
+
+    // Check password
+    const isPasswordValid = await user.isPasswordCorrect(password);
+
+    if (!isPasswordValid) {
+        throw new ApiError(401, "Invalid credentials.");
+    }
+
+    // Generate tokens
+    const { accessToken, refreshToken } =await generateAccessAndRefreshTokens(user._id);
+
+    // Remove sensitive fields
+    const loggedInUser = await User.findById(user._id).select(
+        "-password -refreshToken"
+    );
+
+    return res
+        .status(200)
+        .cookie(
+            "accessToken",
+            accessToken,
+            accessCookieOptions
+        )
+        .cookie(
+            "refreshToken",
+            refreshToken,
+            refreshCookieOptions
+        )
+        .json(
+            new ApiResponse(
+                200,
+                {
+                    user: loggedInUser,
+                    
+                },
+                "Login successful."
+            )
+        );
 });
