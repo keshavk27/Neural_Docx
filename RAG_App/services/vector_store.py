@@ -17,17 +17,11 @@ def create_vector_store(documents, session_id: str):
     
     try:
 
-        splitter = RecursiveCharacterTextSplitter(
-            chunk_size=CHUNK_SIZE,
-            chunk_overlap=CHUNK_OVERLAP,
-        )
+        splitter = RecursiveCharacterTextSplitter(chunk_size=CHUNK_SIZE,chunk_overlap=CHUNK_OVERLAP,)
 
         splits = splitter.split_documents(documents)
 
-        persist_directory = os.path.join(
-            VECTOR_DB_DIR,
-            session_id,
-        )
+        persist_directory = os.path.join(VECTOR_DB_DIR,session_id,)
 
         vector_store = Chroma.from_documents(documents=splits,embedding=embeddings,persist_directory=persist_directory,)
 
@@ -44,10 +38,7 @@ def load_vector_store(session_id: str):
     
     try:
 
-        persist_directory = os.path.join(
-            VECTOR_DB_DIR,
-            session_id,
-        )
+        persist_directory = os.path.join(VECTOR_DB_DIR,session_id,)
 
         if not os.path.exists(persist_directory):
             raise Exception("Vector store not found.")
@@ -67,10 +58,7 @@ def delete_vector_store(session_id: str):
 
     try:
 
-        persist_directory = os.path.join(
-            VECTOR_DB_DIR,
-            session_id,
-        )
+        persist_directory = os.path.join(VECTOR_DB_DIR,session_id,)
 
         if os.path.exists(persist_directory):
             shutil.rmtree(persist_directory)
