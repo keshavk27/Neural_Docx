@@ -1,0 +1,210 @@
+import ChatSession from "../models/chatsession.model.js";
+import Message from "../models/message.model.js";
+import { asyncHandler } from "../utils/asyncHandler.utility.js";
+import { ApiError } from "../utils/apiError.js";
+import { ApiResponse } from "../utils/apiResponse.js";
+import { askQuestionToFastAPI } from "../services/fastapi.service.js";
+
+
+
+// Send Message
+export const sendMessage = asyncHandler(async (req, res) => {
+
+        // Validate User
+        if (!req.user?._id) {
+            throw new ApiError(
+                401,
+                "Unauthorized request."
+            );
+        }
+
+
+        // Validate Session ID
+        const { sessionId } = req.params;
+
+        if (!sessionId) {
+            throw new ApiError(
+                400,
+                "Session ID is required."
+            );
+        }
+
+
+        // Validate Message
+        const { message } = req.body;
+
+        if (!message ||message.trim() === "") 
+        {
+            throw new ApiError(
+                400,
+                "Message is required."
+            );
+        }
+
+        
+        // Find Chat Session
+        const chatSession =await ChatSession.findOne({_id: sessionId,userId: req.user._id,});
+
+        if (!chatSession) 
+        {
+            throw new ApiError(
+                404,
+                "Chat session not found."
+            );
+        }
+
+        
+        // Save User Message
+        const userMessage =await Message.create({sessionId,role: "user",content: message.trim(),});
+
+        if (!userMessage) 
+        {
+            throw new ApiError(
+                500,
+                "Failed to save user message."
+            );
+        }
+
+    
+        // Fetch Previous Messages
+        const messages =await Message.find({sessionId,}).sort({createdAt: 1,});
+
+        
+        // Convert Message History
+        const history = messages.map((message) => (
+            {
+                role: message.role,
+                content: message.content,
+            })
+        );
+
+
+
+        // Ask FastAPI
+        let aiResponse;
+
+        try {
+
+            aiResponse =await askQuestionToFastAPI({sessionId,question: message.trim(),history,});
+
+        } 
+        catch (error) {
+            throw new ApiError(
+                500,
+                error.message ||"Failed to get AI response."
+            );
+        }
+
+        
+        // Validate AI Response
+        if (!aiResponse ||!aiResponse.answer) 
+        {
+            throw new ApiError(
+                500,
+                "Invalid response received from AI server."
+            );
+        }
+
+        
+        // Save Assistant Message
+        const assistantMessage =await Message.create(
+            {
+                sessionId,
+                role: "assistant",
+                content: aiResponse.answer,
+                citations:aiResponse.citations || [],
+                metadata:aiResponse.metadata || {},
+            });
+
+        if (!assistantMessage)
+        {
+            throw new ApiError(
+                500,
+                "Failed to save assistant message."
+            );
+        }
+
+        
+        // Update Chat Session Timestamp
+        chatSession.updatedAt = new Date();
+        await chatSession.save({validateBeforeSave: false,});
+
+        // Success Response
+        return res
+            .status(200)
+            .json(
+                new ApiResponse(
+                    200,
+                    userMessage,
+                    assistantMessage,
+                    "Message sent successfully."
+                )
+            );
+    }
+);
+
+
+// Get Messages
+export const getMessages = asyncHandler(async (req, res) => {
+
+        // Validate User
+        if (!req.user?._id) 
+        {
+            throw new ApiError(
+                401,
+                "Unauthorized request."
+            );
+        }
+
+        
+        // Validate Session ID
+        const { sessionId } = req.params;
+
+        if (!sessionId) 
+        {
+            throw new ApiError(
+                400,
+                "Session ID is required."
+            );
+        }
+
+        
+        // Verify Chat Session
+        const chatSession = await ChatSession.findOne({
+            _id: sessionId,
+            userId: req.user._id,
+        });
+
+        if (!chatSession) 
+        {
+            throw new ApiError(
+                404,
+                "Chat session not found."
+            );
+        }
+
+        
+        // Fetch Messages
+        const messages = await Message.find(
+            {
+                sessionId,
+            })
+            .select(
+                "role content citations metadata createdAt"
+            )
+            .sort({
+                createdAt: 1,
+            }
+        );
+
+        
+        // Success Response
+        return res.status(200).json(
+            new ApiResponse(
+                200,
+                messages,
+                "Messages fetched successfully."
+            )
+        );
+    }
+);

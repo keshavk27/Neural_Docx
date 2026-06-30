@@ -20,6 +20,16 @@ const messageSchema = new mongoose.Schema(
             required: true,
             trim: true,
         },
+        
+        citations: {
+            type: [String],
+            default: [],
+        },
+
+        metadata: {
+            type: mongoose.Schema.Types.Mixed,
+            default: {},
+        },
     },
     {
         timestamps: true,
