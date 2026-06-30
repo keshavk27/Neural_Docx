@@ -36,7 +36,7 @@ const chatSessionSchema = new mongoose.Schema(
 
         title: {
             type: String,
-            required: true,
+            default:"New Chat",
             trim:true
         },
 
@@ -44,14 +44,7 @@ const chatSessionSchema = new mongoose.Schema(
             type: [fileSchema],
             required: true,
             
-        },
-
-        vectorStoreLocation: {
-            type: String,
-            required: true,
-        },
-
-       
+        }
     },
     {
         timestamps: true,

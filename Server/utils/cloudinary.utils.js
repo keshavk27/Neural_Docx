@@ -63,10 +63,7 @@ export const uploadFileToCloudinary = async (localFilePath) => {
     }
 };
 
-export const deleteFileFromCloudinary = async (
-    publicId,
-    resourceType = "raw"
-) => {
+export const deleteFileFromCloudinary = async (publicId,resourceType = "raw") => {
     try {
 
         if (!publicId) {
