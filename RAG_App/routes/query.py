@@ -32,7 +32,7 @@ async def query_documents(request: QueryRequest):
         
         
         # Generate answer
-        answer = ask_question(
+        response = ask_question(
             rag_chain=rag_chain,
             question=request.question,
             history=[
@@ -43,7 +43,9 @@ async def query_documents(request: QueryRequest):
 
         return {
             "success": True,
-            "answer": answer,
+            "answer": response["answer"],
+            "citations":[],
+            "metadata":{}
         }
 
     except Exception as error:

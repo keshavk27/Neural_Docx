@@ -10,7 +10,7 @@ import { askQuestionToFastAPI } from "../services/fastapi.service.js";
 // Send Message
 export const sendMessage = asyncHandler(async (req, res) => {
 
-        // Validate User
+        // Validate user
         if (!req.user?._id) {
             throw new ApiError(
                 401,
@@ -19,7 +19,7 @@ export const sendMessage = asyncHandler(async (req, res) => {
         }
 
 
-        // Validate Session ID
+        // Validate session ID
         const { sessionId } = req.params;
 
         if (!sessionId) {
@@ -30,7 +30,7 @@ export const sendMessage = asyncHandler(async (req, res) => {
         }
 
 
-        // Validate Message
+        // Validate mssg
         const { message } = req.body;
 
         if (!message ||message.trim() === "") 
@@ -42,7 +42,7 @@ export const sendMessage = asyncHandler(async (req, res) => {
         }
 
         
-        // Find Chat Session
+        // Find chat session
         const chatSession =await ChatSession.findOne({_id: sessionId,userId: req.user._id,});
 
         if (!chatSession) 
@@ -54,7 +54,7 @@ export const sendMessage = asyncHandler(async (req, res) => {
         }
 
         
-        // Save User Message
+        // Save user mssg
         const userMessage =await Message.create({sessionId,role: "user",content: message.trim(),});
 
         if (!userMessage) 
@@ -66,11 +66,11 @@ export const sendMessage = asyncHandler(async (req, res) => {
         }
 
     
-        // Fetch Previous Messages
+        // Fetch prv mssg
         const messages =await Message.find({sessionId,}).sort({createdAt: 1,});
 
         
-        // Convert Message History
+        // Convert mssg history 
         const history = messages.map((message) => (
             {
                 role: message.role,
@@ -84,8 +84,13 @@ export const sendMessage = asyncHandler(async (req, res) => {
         let aiResponse;
 
         try {
-
             aiResponse =await askQuestionToFastAPI({sessionId,question: message.trim(),history,});
+
+            // if (chatSession.title === "New Chat" && aiResponse.title) 
+            // {
+            //     chatSession.title = aiResponse.title;
+            //     await chatSession.save({validateBeforeSave: false,});
+            // }
 
         } 
         catch (error) {
@@ -96,7 +101,7 @@ export const sendMessage = asyncHandler(async (req, res) => {
         }
 
         
-        // Validate AI Response
+        // Validate AI response
         if (!aiResponse ||!aiResponse.answer) 
         {
             throw new ApiError(
@@ -106,7 +111,7 @@ export const sendMessage = asyncHandler(async (req, res) => {
         }
 
         
-        // Save Assistant Message
+        // Save assistant mssg 
         const assistantMessage =await Message.create(
             {
                 sessionId,
@@ -125,11 +130,11 @@ export const sendMessage = asyncHandler(async (req, res) => {
         }
 
         
-        // Update Chat Session Timestamp
+        // Update timestamp 
         chatSession.updatedAt = new Date();
         await chatSession.save({validateBeforeSave: false,});
 
-        // Success Response
+        // Success 
         return res
             .status(200)
             .json(
@@ -147,7 +152,6 @@ export const sendMessage = asyncHandler(async (req, res) => {
 // Get Messages
 export const getMessages = asyncHandler(async (req, res) => {
 
-        // Validate User
         if (!req.user?._id) 
         {
             throw new ApiError(
@@ -157,7 +161,7 @@ export const getMessages = asyncHandler(async (req, res) => {
         }
 
         
-        // Validate Session ID
+        // Validate session ID
         const { sessionId } = req.params;
 
         if (!sessionId) 
@@ -169,7 +173,6 @@ export const getMessages = asyncHandler(async (req, res) => {
         }
 
         
-        // Verify Chat Session
         const chatSession = await ChatSession.findOne({
             _id: sessionId,
             userId: req.user._id,
@@ -184,7 +187,6 @@ export const getMessages = asyncHandler(async (req, res) => {
         }
 
         
-        // Fetch Messages
         const messages = await Message.find(
             {
                 sessionId,
@@ -198,7 +200,7 @@ export const getMessages = asyncHandler(async (req, res) => {
         );
 
         
-        // Success Response
+        // Success 
         return res.status(200).json(
             new ApiResponse(
                 200,

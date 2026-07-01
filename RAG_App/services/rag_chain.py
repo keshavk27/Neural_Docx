@@ -29,7 +29,7 @@ qa_system_prompt = (
     "You are an intelligent assistant for document question answering.\n\n"
     "Use ONLY the retrieved document context to answer the user's question.\n\n"
     "If the answer is not available in the retrieved context, "
-    "clearly say that the uploaded documents do not contain the answer.\n\n"
+    "then only search on the web for the generic explanation otherwise use only document for searching answer.\n\n"
     "Keep the answer concise, accurate and well formatted.\n\n"
     "{context}"
 )
@@ -75,6 +75,36 @@ def convert_chat_history(history):
     return chat_history
 
 
+# Generate Chat Title
+
+# title_prompt = (
+# "You are an expert at identifying the topic of a document.\n"
+# "Below is text extracted from a document.\n"
+# "<document>{retrieved_context}</document>\n"
+# "Your task is to identify the primary subject of this document.\n"
+# "Rules:\n"
+# "- Return ONLY the topic.\n"
+# "- Maximum 4 words.\n"
+# "- Use Title Case.\n"
+# "- Do NOT say:\n"
+#   "- AI Assistant\n"
+#   "- Conversation\n"
+#   "- Summary\n"
+#   "- Main Topic\n"
+#   "- Document\n"
+#   "- Discussion\n"
+# "- Do NOT use punctuation.\n"
+# "- Do NOT use quotation marks.\n"
+# )
+
+
+# def generate_chat_title(retrieved_context: str):
+
+    response = llm.invoke(title_prompt)
+    return response.content.strip()
+
+
+
 # Ask Question
 
 def ask_question(rag_chain,question: str,history: list,):
@@ -87,5 +117,14 @@ def ask_question(rag_chain,question: str,history: list,):
             "chat_history": chat_history,
         }
     )
+    
+    # retrieved_context = "\n\n".join(doc.page_content for doc in response["context"][:3])
+    # retrieve_context=retrieved_context[:3000]
+    
+    answer=response["answer"]
+    
+    # title=generate_chat_title(retrieved_context=retrieve_context)
 
-    return response["answer"]
+    return {
+        "answer": answer,
+    }

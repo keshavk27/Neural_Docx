@@ -8,6 +8,7 @@ import {uploadDocumentsToFastAPI,deleteVectorStoreFromFastAPI} from "../services
 import { deleteTempFiles,rollbackCloudinaryUploads,rollbackVectorStore } from "../utils/rollback.utils.js";
 import { deleteChatSessionTransaction } from "../utils/database.utils.js";
 import mongoose from "mongoose";
+import path from "path";
 
 
 
@@ -68,9 +69,13 @@ export const createChatSession = asyncHandler(
             );
 
             // Create Chat Session
+            
+            const title = path.parse(req.files[0].originalname).name || "Untitled Session";
+
             const chatSession =await ChatSession.create(
                 {
                     userId: req.user._id,
+                    title,
                     files,
                 });
 
