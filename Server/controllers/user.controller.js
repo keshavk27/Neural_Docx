@@ -304,3 +304,19 @@ export const logoutUser = asyncHandler(async (req, res) => {
             )
         );
 });
+
+export const getProfile = asyncHandler(
+    async (req, res) => {
+
+        const user = await User.findById(req.user._id).select("-password -refreshToken");
+
+        return res.status(200).json(
+            new ApiResponse(
+                200,
+                user,
+                "Profile fetched successfully."
+            )
+        );
+
+    }
+);
