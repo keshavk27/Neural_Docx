@@ -1,13 +1,12 @@
 import { Plus } from "lucide-react";
+import { useState } from "react";
 import { useSelector } from "react-redux";
 import SidebarItem from "./SidebarItem.jsx";
-
+import CreateChatModal from "./CreateChatModal.jsx";
 const SidebarBody = ({ collapsed }) => {
 
-    const {
-        chatSessions,
-        isLoading,
-    } = useSelector((state) => state.chatSession);
+    const [openCreateChatModal, setOpenCreateChatModal] = useState(false);
+    const {chatSessions,isLoading,} = useSelector((state) => state.chatSession);
 
     return (
         <div className="flex flex-1 flex-col overflow-hidden">
@@ -17,6 +16,7 @@ const SidebarBody = ({ collapsed }) => {
             <div className="p-4">
 
                 <button
+                    onClick={() => setOpenCreateChatModal(true)}
                     className={`
                         flex
                         w-full
@@ -29,11 +29,7 @@ const SidebarBody = ({ collapsed }) => {
                         text-white
                         transition
                         hover:bg-gray-800
-                        ${
-                            collapsed
-                                ? "justify-center"
-                                : "gap-3"
-                        }
+                        ${collapsed ? "justify-center": "gap-3"}
                     `}
                 >
 
@@ -50,6 +46,10 @@ const SidebarBody = ({ collapsed }) => {
                 </button>
 
             </div>
+            <CreateChatModal
+                open={openCreateChatModal}
+                onClose={() => setOpenCreateChatModal(false)}
+            />
 
 
 
