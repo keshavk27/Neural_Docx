@@ -29,6 +29,8 @@ const AppRoutes = () => {
             <Route element={<ProtectedRoute />}>
                 <Route element={<DashboardLayout />}>
                     <Route path="/" element={<Dashboard />}/>
+                    <Route path="/chat/:sessionId" element={<Dashboard />}/>
+
                 </Route>
             </Route>
 

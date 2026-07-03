@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import AppRoutes from "./routes/AppRoute.js";
+import AppRoutes from "./routes/AppRoute.jsx";
 import { getProfileThunk } from "./features/auth/authThunk.js";
 import AppLoader from "./components/common/appLoader.jsx";
 
