@@ -84,8 +84,8 @@ const Register = () => {
           <p className="mt-2 text-[#97A1B8]">Ask your documents anything.</p>
         </div>
 
-        <div className="flex flex-1 items-center justify-center min-h-[200px]">
-          <svg viewBox="0 0 240 200" className="w-full max-w-[280px]" aria-hidden="true">
+        <div className="flex flex-1 items-center justify-center min-h-50">
+          <svg viewBox="0 0 240 200" className="w-full max-w-70" aria-hidden="true">
             <defs>
               <linearGradient id="beamGrad" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#4FD9C5" stopOpacity="0" />
@@ -143,7 +143,7 @@ const Register = () => {
 
       {/* Form panel */}
       <div className="flex flex-1 items-center justify-center p-8">
-        <div className="w-full max-w-[400px] rounded-2xl border border-[#242B3D] bg-[#131722] p-10 shadow-[0_20px_50px_rgba(0,0,0,0.35)] my-8">
+        <div className="w-full max-w-100 rounded-2xl border border-[#242B3D] bg-[#131722] p-10 shadow-[0_20px_50px_rgba(0,0,0,0.35)] my-8">
           <h1 className="mb-1 text-2xl font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
             Register
           </h1>
