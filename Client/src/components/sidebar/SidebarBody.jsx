@@ -1,12 +1,20 @@
 import { Plus } from "lucide-react";
-import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useState,useEffect } from "react";
+import { useSelector,useDispatch } from "react-redux";
 import SidebarItem from "./SidebarItem.jsx";
 import CreateChatModal from "./CreateChatModal.jsx";
+import {getAllChatSessionsThunk} from "../../features/chatsession/chatSessionThunk.js";
+
 const SidebarBody = ({ collapsed }) => {
+
+    const dispatch = useDispatch();
 
     const [openCreateChatModal, setOpenCreateChatModal] = useState(false);
     const {chatSessions,isLoading,} = useSelector((state) => state.chatSession);
+
+    useEffect(() => {
+        dispatch(getAllChatSessionsThunk());
+    }, [dispatch]);
 
     return (
         <div className="flex flex-1 flex-col overflow-hidden">

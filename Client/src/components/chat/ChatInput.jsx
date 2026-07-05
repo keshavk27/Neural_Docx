@@ -1,21 +1,40 @@
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import TextareaAutosize from "react-textarea-autosize";
 import { ArrowUp, Paperclip } from "lucide-react";
+import { sendMessageThunk } from "../../features/message/messageThunk.js";
 
-const ChatInput = () => {
+const ChatInput = ({ sessionId }) => {
+
+    const dispatch = useDispatch();
+    const { isSending } = useSelector(
+        (state) => state.message
+    );
 
     const [message, setMessage] = useState("");
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!message.trim()) return;
-        console.log(message);
-        setMessage("");
+        if (!sessionId) return;
+        const currentMessage = message.trim();
+        if (!currentMessage) return;
+        try {
+            await dispatch(
+                sendMessageThunk({
+                    sessionId,
+                    message: currentMessage,
+                })
+            ).unwrap();
+            setMessage("");
+        }
+        catch (error) {
+            console.error(error);
+        }
+
     };
 
     const handleKeyDown = (e) => {
-        if (e.key === "Enter" && !e.shiftKey) 
-        {
+        if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
             handleSubmit(e);
         }
@@ -32,10 +51,11 @@ const ChatInput = () => {
 
                 <div className="flex items-end gap-2 rounded-3xl border border-neutral-700 bg-[#303030] px-4 py-3 shadow-lg">
 
-                    {/* Upload */}
+                    {/* Attach Documents */}
 
                     <button
                         type="button"
+                        disabled={!sessionId || isSending}
                         className="
                             mb-1
                             rounded-full
@@ -44,6 +64,8 @@ const ChatInput = () => {
                             transition
                             hover:bg-neutral-700
                             hover:text-white
+                            disabled:cursor-not-allowed
+                            disabled:opacity-40
                         "
                     >
 
@@ -51,17 +73,20 @@ const ChatInput = () => {
 
                     </button>
 
-
-
                     {/* Textarea */}
 
                     <TextareaAutosize
                         minRows={1}
                         maxRows={8}
                         value={message}
+                        disabled={!sessionId || isSending}
                         onChange={(e) => setMessage(e.target.value)}
                         onKeyDown={handleKeyDown}
-                        placeholder="Ask anything about your documents..."
+                        placeholder={
+                            sessionId
+                                ? "Ask anything about your documents..."
+                                : "Create or open a chat to begin..."
+                        }
                         className="
                             flex-1
                             resize-none
@@ -71,16 +96,20 @@ const ChatInput = () => {
                             text-white
                             placeholder:text-neutral-500
                             focus:outline-none
+                            disabled:cursor-not-allowed
+                            disabled:opacity-60
                         "
                     />
-
-
 
                     {/* Send */}
 
                     <button
                         type="submit"
-                        disabled={!message.trim()}
+                        disabled={
+                            !sessionId ||
+                            !message.trim() ||
+                            isSending
+                        }
                         className="
                             rounded-full
                             bg-white
@@ -104,6 +133,7 @@ const ChatInput = () => {
         </div>
 
     );
+
 };
 
 export default ChatInput;

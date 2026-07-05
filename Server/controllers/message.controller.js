@@ -140,8 +140,10 @@ export const sendMessage = asyncHandler(async (req, res) => {
             .json(
                 new ApiResponse(
                     200,
-                    userMessage,
-                    assistantMessage,
+                    {
+                        userMessage,
+                        assistantMessage,
+                    },
                     "Message sent successfully."
                 )
             );

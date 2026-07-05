@@ -16,6 +16,20 @@ const chatSessionSlice = createSlice({
         clearSelectedChatSession: (state) => {
             state.selectedChatSession = null;
         },
+        updateSelectedChatSessionFiles: (state, action) => {
+
+            if (!state.selectedChatSession) return;
+            state.selectedChatSession.files = action.payload;
+
+            const index = state.chatSessions.findIndex(
+                (chat) => chat._id === state.selectedChatSession._id
+            );
+            if (index !== -1) 
+            {
+                state.chatSessions[index].files = action.payload;
+            }
+        },
+
     },
 
     extraReducers: (builder) => {
@@ -88,5 +102,5 @@ const chatSessionSlice = createSlice({
 
     },
 });
-export const {clearChatSessionError,clearSelectedChatSession,} = chatSessionSlice.actions;
+export const {clearChatSessionError,clearSelectedChatSession,updateSelectedChatSessionFiles} = chatSessionSlice.actions;
 export default chatSessionSlice.reducer;
