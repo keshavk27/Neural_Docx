@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import TextareaAutosize from "react-textarea-autosize";
 import { ArrowUp, Paperclip } from "lucide-react";
 import { sendMessageThunk } from "../../features/message/messageThunk.js";
+import { addUserMessage,markMessageFailed } from "../../features/message/messageSlice.js";
 
 const ChatInput = ({ sessionId }) => {
 
@@ -12,6 +13,7 @@ const ChatInput = ({ sessionId }) => {
     );
 
     const [message, setMessage] = useState("");
+    const tempId=`temp-${Date.now()}`;
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -19,13 +21,29 @@ const ChatInput = ({ sessionId }) => {
         const currentMessage = message.trim();
         if (!currentMessage) return;
         try {
-            await dispatch(
-                sendMessageThunk({
-                    sessionId,
-                    message: currentMessage,
+            dispatch(
+                addUserMessage({
+                    _id: tempId,
+                    role: "user",
+                    content: currentMessage,
+                    createdAt: new Date().toISOString(),
+                    status: "sending",
                 })
-            ).unwrap();
-            setMessage("");
+            );
+            try {
+                await dispatch( sendMessageThunk(
+                    {
+                        sessionId,
+                        message: currentMessage,
+                    }
+                )).unwrap();
+
+                setMessage("");
+                }
+                catch (error) {
+                    dispatch(markMessageFailed(tempId));
+                    setMessage("");
+                }
         }
         catch (error) {
             console.error(error);
@@ -43,16 +61,13 @@ const ChatInput = ({ sessionId }) => {
     return (
 
         <div className="border-t border-neutral-800 bg-[#212121] px-6 py-5">
-
             <form
                 onSubmit={handleSubmit}
                 className="mx-auto max-w-4xl"
             >
-
                 <div className="flex items-end gap-2 rounded-3xl border border-neutral-700 bg-[#303030] px-4 py-3 shadow-lg">
 
                     {/* Attach Documents */}
-
                     <button
                         type="button"
                         disabled={!sessionId || isSending}
@@ -70,11 +85,9 @@ const ChatInput = ({ sessionId }) => {
                     >
 
                         <Paperclip size={20} />
-
                     </button>
 
                     {/* Textarea */}
-
                     <TextareaAutosize
                         minRows={1}
                         maxRows={8}
@@ -102,7 +115,6 @@ const ChatInput = ({ sessionId }) => {
                     />
 
                     {/* Send */}
-
                     <button
                         type="submit"
                         disabled={
@@ -123,17 +135,11 @@ const ChatInput = ({ sessionId }) => {
                     >
 
                         <ArrowUp size={18} />
-
                     </button>
-
                 </div>
-
             </form>
-
         </div>
-
     );
-
 };
 
 export default ChatInput;
