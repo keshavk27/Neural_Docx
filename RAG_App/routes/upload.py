@@ -1,10 +1,13 @@
 import os
 import shutil
+import uuid
+
 from typing import List
 from fastapi import (APIRouter,UploadFile,File,Form,HTTPException,)
+
 from services.doc_loader import load_multiple_documents
-from services.vector_store import create_vector_store
-import uuid
+from services.vector_store import add_documents
+
 
 router = APIRouter()
 
@@ -14,38 +17,40 @@ os.makedirs(TEMP_DIR, exist_ok=True)
 
 
 @router.post("/upload")
-async def upload_documents(
-    sessionId: str = Form(...),
-    files: List[UploadFile] = File(...),
-):
-
-    temp_file_paths = []
-
+async def upload_documents(sessionId: str = Form(...),files: List[UploadFile] = File(...),):
+    
+    temp_files = []
     try:
-
-        #save files into temp
         for uploaded_file in files:
 
-            temp_path = os.path.join(TEMP_DIR,f"{uuid.uuid4()}_{uploaded_file.filename}",)
-
+            # Save uploaded file temporarily
+            temp_path = os.path.join(
+                TEMP_DIR,
+                f"{uuid.uuid4()}_{uploaded_file.filename}",
+            )
             with open(temp_path, "wb") as buffer:
                 shutil.copyfileobj(
                     uploaded_file.file,
                     buffer,
                 )
+            temp_files.append(
+                (
+                    temp_path,
+                    uploaded_file.filename,
+                )
+            )
 
-            temp_file_paths.append(temp_path)
-
-        # Load documents
-        documents = load_multiple_documents(temp_file_paths)
-
-        # Create vector store
-        create_vector_store(documents,sessionId,)
+        # Process every uploaded file
+        for temp_path, original_name in temp_files:
+            documents = load_multiple_documents( [temp_path])
+            document_id = str(uuid.uuid4())
+            add_documents(documents=documents, session_id=sessionId,user_id=None, document_id=document_id,file_name=original_name,)
 
         return {
             "success": True,
             "sessionId": sessionId,
-            "message": "Vector database created successfully.",
+            "documentsUploaded": len(files),
+            "message": "Documents indexed successfully.",
         }
 
     except Exception as error:
@@ -56,9 +61,6 @@ async def upload_documents(
         )
 
     finally:
-
-        # Delete temp files
-        for file_path in temp_file_paths:
-
-            if os.path.exists(file_path):
-                os.remove(file_path)
+        for temp_path, _ in temp_files:
+            if os.path.exists(temp_path):
+                os.remove(temp_path)

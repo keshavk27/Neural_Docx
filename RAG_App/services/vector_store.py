@@ -1,72 +1,168 @@
 import os
-import shutil
-from langchain_chroma import Chroma
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-from services.embeddings import embeddings
+
 from dotenv import load_dotenv
+
+from qdrant_client import QdrantClient
+from qdrant_client.models import (Distance,VectorParams,PayloadSchemaType, Filter, FieldCondition, MatchValue,PointIdsList,)
+
+from langchain_qdrant import QdrantVectorStore
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+
+from services.embeddings import embeddings
+
 load_dotenv()
 
 
+# Configuration
 CHUNK_SIZE = 5000
 CHUNK_OVERLAP = 200
 
-VECTOR_DB_DIR = os.getenv("VECTOR_DB_DIR","./vectorDB")
+QDRANT_URL = os.getenv("QDRANT_URL")
+QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
+
+COLLECTION_NAME = os.getenv("QDRANT_COLLECTION","neural_docx_documents",)
+
+VECTOR_SIZE = int(os.getenv("EMBEDDING_DIMENSION", "384"))
 
 
-def create_vector_store(documents, session_id: str):
-    
-    try:
+# Client
+client = QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY,)
 
-        splitter = RecursiveCharacterTextSplitter(chunk_size=CHUNK_SIZE,chunk_overlap=CHUNK_OVERLAP,)
 
-        splits = splitter.split_documents(documents)
-
-        persist_directory = os.path.join(VECTOR_DB_DIR,session_id,)
-
-        vector_store = Chroma.from_documents(documents=splits,embedding=embeddings,persist_directory=persist_directory,)
-
-        return vector_store
-
-    except Exception as error:
-
-        raise Exception(
-            f"Failed to create vector store: {str(error)}"
+# Collection
+def ensure_collection():
+    collections = client.get_collections().collections
+    exists = any(collection.name == COLLECTION_NAME for collection in collections)
+    if not exists:
+        client.create_collection(
+            collection_name=COLLECTION_NAME,
+            vectors_config=VectorParams(
+                size=VECTOR_SIZE,
+                distance=Distance.COSINE,
+            ),
         )
 
+    # Create payload indexes
+    client.create_payload_index(
+        collection_name=COLLECTION_NAME,
+        field_name="metadata.session_id",
+        field_schema=PayloadSchemaType.KEYWORD,
+    )
+    client.create_payload_index(
+        collection_name=COLLECTION_NAME,
+        field_name="metadata.document_id",
+        field_schema=PayloadSchemaType.KEYWORD,
+    )
+    client.create_payload_index(
+        collection_name=COLLECTION_NAME,
+        field_name="metadata.user_id",
+        field_schema=PayloadSchemaType.KEYWORD,
+    )
 
-def load_vector_store(session_id: str):
+
+# Split Documents
+def split_documents(documents):
+    splitter = RecursiveCharacterTextSplitter( chunk_size=CHUNK_SIZE, chunk_overlap=CHUNK_OVERLAP,)
+    return splitter.split_documents(documents)
+
+#VECTOR STORE HELPER
+def get_vector_store():
+    ensure_collection()
+
+    return QdrantVectorStore(
+        client=client,
+        collection_name=COLLECTION_NAME,
+        embedding=embeddings,
+    )
     
+    
+# Add Documents    
+def add_documents(*,documents,session_id,document_id,file_name,user_id=None):
     try:
+        ensure_collection()
+        splits = split_documents(documents)
+        for index, document in enumerate(splits):
+            document.metadata.update(
+                {
+                    "user_id": user_id,
+                    "session_id": session_id,
+                    "document_id": document_id,
+                    "file_name": file_name,
+                    "chunk_index": index,
+                }
+            )
 
-        persist_directory = os.path.join(VECTOR_DB_DIR,session_id,)
-
-        if not os.path.exists(persist_directory):
-            raise Exception("Vector store not found.")
-
-        vector_store = Chroma(embedding_function=embeddings,persist_directory=persist_directory,)
-
-        return vector_store
-
-    except Exception as error:
-
-        raise Exception(
-            f"Failed to load vector store: {str(error)}"
-        )
-
-
-def delete_vector_store(session_id: str):
-
-    try:
-
-        persist_directory = os.path.join(VECTOR_DB_DIR,session_id,)
-
-        if os.path.exists(persist_directory):
-            shutil.rmtree(persist_directory)
-
+        vector_store = get_vector_store()
+        vector_store.add_documents(splits)
         return True
 
     except Exception as error:
+        raise Exception( f"Failed to add documents: {error}")
 
-        raise Exception(
-            f"Failed to delete vector store: {str(error)}"
+
+# Get Retriever
+def get_retriever(session_id):
+    try:
+        ensure_collection()
+        vector_store = get_vector_store()
+        retriever = vector_store.as_retriever(
+            search_kwargs={
+                "k": 6,
+                "filter": Filter(
+                    must=[
+                        FieldCondition(
+                            key="metadata.session_id",
+                            match=MatchValue(value=session_id,),
+                        )
+                    ]
+                ),
+            }
         )
+        return retriever
+
+    except Exception as error:
+        raise Exception(f"Failed to create retriever: {error}")
+
+
+# Delete Session
+def delete_session_vectors(session_id):
+    try:
+        ensure_collection()
+        client.delete(
+            collection_name=COLLECTION_NAME,
+            points_selector=Filter(
+                must=[
+                    FieldCondition(
+                        key="metadata.session_id",
+                        match=MatchValue( value=session_id,),
+                    )
+                ]
+            ),
+        )
+        return True
+    except Exception as error:
+
+        raise Exception(f"Failed to delete session vectors: {error}")
+
+
+# Delete Document
+def delete_document_vectors(document_id):
+    try:
+        ensure_collection()
+        client.delete(
+            collection_name=COLLECTION_NAME,
+            points_selector=Filter(
+                must=[
+                    FieldCondition(
+                        key="metadata.document_id",
+                        match=MatchValue(
+                            value=document_id,
+                        ),
+                    )
+                ]
+            ),
+        )
+        return True
+
+    except Exception as error:
+        raise Exception(f"Failed to delete document vectors: {error}" )
