@@ -15,18 +15,12 @@ export const sendOTPEmail = async (email, otp) => {
         
         await transporter.sendMail({
             from: process.env.EMAIL_USER,
-
             to: email,
- 
-            subject: "Verify Your Email",
-
+            subject: "Neural Docx : Email Verification",
             html: `
-                <h2>Email Verification</h2>
-
+                <h2>Verify your email</h2>
                 <p>Your OTP is:</p>
-
                 <h1>${otp}</h1>
-
                 <p>This OTP is valid for 5 minutes.</p>
             `,
         });

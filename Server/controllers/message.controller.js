@@ -86,12 +86,6 @@ export const sendMessage = asyncHandler(async (req, res) => {
         try {
             aiResponse =await askQuestionToFastAPI({sessionId,question: message.trim(),history,});
 
-            // if (chatSession.title === "New Chat" && aiResponse.title) 
-            // {
-            //     chatSession.title = aiResponse.title;
-            //     await chatSession.save({validateBeforeSave: false,});
-            // }
-
         } 
         catch (error) {
             throw new ApiError(
