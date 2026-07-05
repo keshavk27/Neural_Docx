@@ -1,5 +1,6 @@
 import { MessageSquare } from "lucide-react";
 import { NavLink } from "react-router-dom";
+import SidebarMenu from "./SidebarMenu.jsx";
 
 const SidebarItem = ({chatSession,collapsed,}) => {
 
@@ -8,6 +9,7 @@ const SidebarItem = ({chatSession,collapsed,}) => {
             to={`/chat/${chatSession._id}`}
             className={({ isActive }) =>
                 `
+                    group
                     mb-1
                     flex
                     items-center
@@ -42,6 +44,7 @@ const SidebarItem = ({chatSession,collapsed,}) => {
 
             {
                 !collapsed && (
+                    <>
 
                     <span
                         className="
@@ -53,6 +56,9 @@ const SidebarItem = ({chatSession,collapsed,}) => {
                     >
                         {chatSession.title}
                     </span>
+
+                    <SidebarMenu chatSession={chatSession}/>
+                    </>
 
                 )
             }
