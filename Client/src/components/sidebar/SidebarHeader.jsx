@@ -16,25 +16,7 @@ const SidebarHeader = ({collapsed,toggleSidebar,}) => {
             {/* Logo */}
 
             <div className="flex items-center gap-3 overflow-hidden">
-
-                <div
-                    className="
-                        flex
-                        h-10
-                        w-10
-                        items-center
-                        justify-center
-                        rounded-lg
-                        bg-white
-                        text-lg
-                        font-bold
-                        text-black
-                        shrink-0
-                    "
-                >
-                    N
-                </div>
-
+                <img src="\Temp\logo.svg"  alt="N" className="h-10 w-10 shrink-0 rounded-lg bg-black object-contain shadow-sm" />
                 {
                     !collapsed && (
 
