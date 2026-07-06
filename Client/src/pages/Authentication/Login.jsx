@@ -39,7 +39,7 @@ const Login = () => {
       const profileResult = await dispatch(getProfileThunk());
       if (getProfileThunk.fulfilled.match(profileResult)) {
         toast.success("Login successful.");
-        navigate("/");
+        navigate("/chat");
       }
     }
   };
@@ -55,7 +55,7 @@ const Login = () => {
   // Already Logged In
   useEffect(() => {
     if (isAuthenticated) {
-      navigate("/");
+      navigate("/chat");
     }
   }, [isAuthenticated, navigate]);
 

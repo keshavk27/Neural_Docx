@@ -25,7 +25,7 @@ const DeleteChatModal = ({ open, onClose, chatSession,}) => {
         if (deleteChatSessionThunk.fulfilled.match(result)) {
             onClose();
             if (sessionId === chatSession._id) {
-                navigate("/");
+                navigate("/chat");
             }
 
         }
