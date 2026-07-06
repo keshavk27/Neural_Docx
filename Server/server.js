@@ -7,6 +7,7 @@ import cors from 'cors';
 import chatSessionrouter from './routes/chatSession.routes.js';
 import userrouter from './routes/user.routes.js';
 import messagerouter from './routes/message.routes.js';
+import analyticsrouter from './routes/analytics.routes.js'
 
 import { errorHandler } from './middleware/error.middleware.js';
 import { ApiError } from './utils/apiError.js';
@@ -28,6 +29,7 @@ app.use(cookieParser());
 app.use('/api/v1/user',userrouter)
 app.use('/api/v1/chatsessions',chatSessionrouter)
 app.use('/api/v1/messages',messagerouter)
+app.use('/api/v1/analytics',analyticsrouter)
 
 //root
 app.get('/', (req, res) => {
