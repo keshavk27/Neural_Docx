@@ -1,16 +1,16 @@
 import { Plus } from "lucide-react";
-import { useState,useEffect } from "react";
-import { useSelector,useDispatch } from "react-redux";
+import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import SidebarItem from "./SidebarItem.jsx";
 import CreateChatModal from "./CreateChatModal.jsx";
-import {getAllChatSessionsThunk} from "../../features/chatsession/chatSessionThunk.js";
-
+import { getAllChatSessionsThunk } from "../../features/chatsession/chatSessionThunk.js";
+import SidebarHome from "./SidebarHome.jsx";
 const SidebarBody = ({ collapsed }) => {
 
     const dispatch = useDispatch();
 
     const [openCreateChatModal, setOpenCreateChatModal] = useState(false);
-    const {chatSessions,isLoading,} = useSelector((state) => state.chatSession);
+    const { chatSessions, isLoading, } = useSelector((state) => state.chatSession);
 
     useEffect(() => {
         dispatch(getAllChatSessionsThunk());
@@ -37,7 +37,7 @@ const SidebarBody = ({ collapsed }) => {
                         text-white
                         transition
                         hover:bg-gray-800
-                        ${collapsed ? "justify-center": "gap-3"}
+                        ${collapsed ? "justify-center" : "gap-3"}
                     `}
                 >
 
@@ -58,6 +58,15 @@ const SidebarBody = ({ collapsed }) => {
                 open={openCreateChatModal}
                 onClose={() => setOpenCreateChatModal(false)}
             />
+
+
+            <div className="px-4 pb-2 hover: text-blue-400">
+
+                <SidebarHome collapsed={collapsed} />
+
+            </div>
+
+            <hr className="mx-4 mb-3 border-neutral-800" />
 
 
 
