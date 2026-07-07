@@ -60,6 +60,7 @@ async def query_documents(request: QueryRequest):
         raise
 
     except Exception as error:
+        # print("ye query me hai")
         raise HTTPException(
             status_code=500,
             detail=str(error),

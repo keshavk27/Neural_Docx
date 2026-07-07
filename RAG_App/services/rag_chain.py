@@ -64,7 +64,7 @@ def convert_chat_history(history):
 
     for message in history:
 
-        if message["role"] == "human":
+        if message["role"] in ["human","user"]:
 
             chat_history.append(HumanMessage(content=message["content"]))
 
