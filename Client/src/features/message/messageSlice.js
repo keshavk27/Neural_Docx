@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getMessagesThunk, sendMessageThunk,} from "./messageThunk.js";
+import { getMessagesThunk, sendMessageThunk } from "./messageThunk.js";
 
 const initialState = {
     messages: [],
@@ -17,7 +17,10 @@ const messageSlice = createSlice({
             state.error = null;
         },
         addUserMessage: (state, action) => {
-            state.messages.push(action.payload);
+            const exists = state.messages.some((msg) => msg._id === action.payload._id);
+            if (!exists) {
+                state.messages.push(action.payload);
+            }
         },
         markMessageFailed: (state, action) => {
             const message = state.messages.find(
@@ -27,10 +30,16 @@ const messageSlice = createSlice({
                 message.status = "failed";
             }
         },
+        markMessageSending:(state,action)=>{
+            const message=state.messages.find((msg)=>msg._id===action.payload)
+            if(message)
+            {
+                message.status="sending";
+            }
+        }
     },
     extraReducers: (builder) => {
         builder
-
             // GET MESSAGES
             .addCase(getMessagesThunk.pending, (state) => {
                 state.isLoading = true;
@@ -56,26 +65,30 @@ const messageSlice = createSlice({
             .addCase(sendMessageThunk.fulfilled, (state, action) => {
                 state.isSending = false;
 
-                // Replace temporary message
-                const index = state.messages.findIndex((msg) =>
-                        msg.status === "sending" && msg.role === "user"
+                state.messages = state.messages.filter(
+                    (msg) => msg.status !== "sending" && !String(msg._id).startsWith("temp-")
                 );
-                if (index !== -1) {
-                    state.messages[index] = {
-                        ...action.payload.userMessage,
+
+                const { userMessage, assistantMessage } = action.payload;
+
+                if (userMessage && !state.messages.some((m) => m._id === userMessage._id)) {
+                    state.messages.push({
+                        ...userMessage,
                         status: "sent",
-                    };
+                    });
                 }
 
-                // Append assistant message
-                state.messages.push({
-                    ...action.payload.assistantMessage,
-                    status: "sent",
-                });
+                if (assistantMessage && !state.messages.some((m) => m._id === assistantMessage._id)) {
+                    state.messages.push({
+                        ...assistantMessage,
+                        status: "sent",
+                    });
+                }
             })
             .addCase(sendMessageThunk.rejected, (state, action) => {
                 state.isSending = false;
                 state.error = action.payload;
+                
                 const index = state.messages.findIndex( (msg) =>
                         msg.status === "sending" && msg.role === "user"
                 );
@@ -85,5 +98,6 @@ const messageSlice = createSlice({
             });
     },
 });
-export const {clearMessages, addUserMessage, markMessageFailed,} = messageSlice.actions;
+
+export const { clearMessages, addUserMessage, markMessageFailed,markMessageSending } = messageSlice.actions;
 export default messageSlice.reducer;

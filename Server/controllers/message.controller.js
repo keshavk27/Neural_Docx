@@ -67,9 +67,17 @@ export const sendMessage = asyncHandler(async (req, res) => {
 
     
         // Fetch prv mssg
-        const messages =await Message.find({sessionId,}).sort({createdAt: 1,});
+        const messages =await Message.find(
+            {
+                sessionId:sessionId,
+                _id:{$ne: userMessage._id}
+            })
+            .sort({createdAt: -1,})
+            .limit(20);
 
-        
+        messages.reverse();
+
+
         // Convert mssg history 
         const history = messages.map((message) => (
             {
@@ -88,6 +96,9 @@ export const sendMessage = asyncHandler(async (req, res) => {
 
         } 
         catch (error) {
+            if (userMessage && userMessage._id) {
+                await Message.findByIdAndDelete(userMessage._id);
+            }
             throw new ApiError(
                 500,
                 error.message ||"Failed to get AI response."

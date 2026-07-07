@@ -1,3 +1,4 @@
+import traceback
 from typing import List
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
@@ -20,7 +21,7 @@ class QueryRequest(BaseModel):
 
 # Ask Question
 @router.post("/ask")
-async def query_documents(request: QueryRequest):
+def query_documents(request: QueryRequest):
     try:
         
         # Create filtered retriever
@@ -60,7 +61,9 @@ async def query_documents(request: QueryRequest):
         raise
 
     except Exception as error:
-        # print("ye query me hai")
+        print("--- SERVER CRASH DIAGNOSTIC ---")
+        traceback.print_exc() 
+        print("-------------------------------")
         raise HTTPException(
             status_code=500,
             detail=str(error),
