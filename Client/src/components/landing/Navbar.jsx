@@ -1,6 +1,5 @@
 import { Link, NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
-
 const Navbar = () => {
 
     const { isAuthenticated, user } = useSelector( (state) => state.auth);
@@ -10,9 +9,6 @@ const Navbar = () => {
                 sticky
                 top-0
                 z-50
-                border-b
-                border-neutral-800
-                bg-[#121212]/80
                 backdrop-blur-lg
             "
         >
@@ -28,16 +24,27 @@ const Navbar = () => {
                 "
             >
                 {/* Logo */}
+                
                 <Link
                     to="/"
                     className="
-                        text-2xl
+                        flex 
+                        items-center 
+                        gap-3 
+                        text-3xl
                         font-bold
                         tracking-tight
                         text-white
                     "
                 >
-                    Neural Docx
+                    {/* 2. Add the img tag for your SVG */}
+                    <img 
+                        src="\assets\logo.svg" 
+                        alt="N" 
+                        className="h-10 w-10 rounded-2xl" // <-- Adjust size here (h-8 is 32px)
+                    />
+                    
+                    <span>Neural Docx</span>
                 </Link>
 
 
@@ -54,7 +61,7 @@ const Navbar = () => {
                         className={({ isActive }) =>
                             `
                                 text-sm
-                                font-medium
+                                font-bold
                                 transition
                                 ${
                                     isActive
@@ -73,12 +80,12 @@ const Navbar = () => {
                                 className={({ isActive }) =>
                                     `
                                         text-sm
-                                        font-medium
+                                        font-bold
                                         transition
                                         ${
                                             isActive
                                                 ? "text-white"
-                                                : "text-neutral-400 hover:text-white"
+                                                : "text-white hover:text-blue-200"
                                         }
                                     `
                                 }
@@ -149,7 +156,7 @@ const Navbar = () => {
                                         items-center
                                         justify-center
                                         rounded-full
-                                        bg-neutral-700
+                                        bg-teal-500
                                         text-sm
                                         font-semibold
                                         uppercase
@@ -158,7 +165,7 @@ const Navbar = () => {
                                 >
 
                                     {
-                                        user?.fullName
+                                        user?.fullname
                                             ?.charAt(0)
                                             ?.toUpperCase() || "U"
                                     }
