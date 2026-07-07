@@ -61,3 +61,22 @@ export const deleteChatSessionThunk = createAsyncThunk("chatSession/delete",asyn
         }
     }
 );
+
+
+// Upload Document to Existing Session
+export const uploadToExistingSessionThunk = createAsyncThunk("chatSession/uploadDocument",async ({ sessionId, formData }, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.post(`/chatsessions/${sessionId}/upload`, 
+                formData,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                }
+            );
+            return response.data.data; 
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.message || "Failed to upload document.");
+        }
+    }
+);

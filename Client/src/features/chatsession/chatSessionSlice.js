@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import {createChatSessionThunk,getAllChatSessionsThunk,getChatSessionByIdThunk,deleteChatSessionThunk,} from "./chatSessionThunk";
+import {createChatSessionThunk,getAllChatSessionsThunk,getChatSessionByIdThunk,deleteChatSessionThunk,uploadToExistingSessionThunk} from "./chatSessionThunk";
 const initialState = {
     chatSessions: [],
     selectedChatSession: null,
@@ -98,6 +98,30 @@ const chatSessionSlice = createSlice({
             .addCase(deleteChatSessionThunk.rejected, (state, action) => {
                 state.isLoading = false;
                 state.error = action.payload;
+            })
+            
+            //addDocumentsToSession
+            .addCase(uploadToExistingSessionThunk.fulfilled, (state, action) => {
+                if (state.selectedChatSession) {
+                    if(!state.selectedChatSession.files)
+                    {
+                        state.selectedChatSession.files=[];
+                    }
+                    state.selectedChatSession.files.push(...action.payload);
+                }
+                
+                if (state.selectedChatSession) {
+                    const index = state.chatSessions.findIndex(
+                        (chat) => chat._id === state.selectedChatSession._id
+                    );
+                    if (index !== -1) {
+                        if(!state.chatSessions[index].files)
+                        {
+                            state.chatSessions[index].files=[];
+                        }
+                        state.chatSessions[index].files.push(...action.payload);
+                    }
+                }
             });
 
     },

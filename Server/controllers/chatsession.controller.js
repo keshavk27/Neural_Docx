@@ -279,3 +279,87 @@ export const deleteChatSession = asyncHandler(async (req, res) => {
         );
     }
 );
+
+
+// Add Documents to Existing Chat Session
+export const addDocumentToSession = asyncHandler(async (req, res) => {
+    
+    const uploadedCloudinaryFiles = [];
+    try {
+        // Validate Session ID
+        const { sessionId } = req.params;
+        if (!sessionId) {
+            throw new ApiError(400, "Session ID is required.");
+        }
+
+        // Validate Uploaded Files
+        if (!req.files || req.files.length === 0) {
+            throw new ApiError(400, "Please upload at least one document.");
+        }
+
+        // Keep your existing file limit rules
+        if (req.files.length > 3) {
+            throw new ApiError(400, "Maximum 3 files are allowed per upload.");
+        }
+
+        // Validate User & Session Existence
+        const chatSession = await ChatSession.findOne({ 
+            _id: sessionId, 
+            userId: req.user._id 
+        });
+
+        if (!chatSession) {
+            throw new ApiError(404, "Chat session not found or unauthorized.");
+        }
+
+        // Upload Files To Cloudinary
+        for (const file of req.files) {
+            const uploadedFile = await uploadFileToCloudinary(file.path);
+            uploadedCloudinaryFiles.push(uploadedFile);
+        }
+
+        if (uploadedCloudinaryFiles.length !== req.files.length) {
+            throw new ApiError(500, "Some files failed to upload to Cloudinary.");
+        }
+
+        // Send to FastAPI Vector Store
+        try {
+            await uploadDocumentsToFastAPI(sessionId, req.files);
+        } catch (error) {
+            throw error; 
+        }
+
+        // Prepare File Data for MongoDB
+        const newFiles = uploadedCloudinaryFiles.map((file) => ({
+            fileName: file.fileName,
+            fileType: file.fileType,
+            cloudinaryUrl: file.cloudinaryUrl,
+            cloudinaryPublicId: file.cloudinaryPublicId,
+        }));
+
+        // Push new files to the existing MongoDB array and save
+        chatSession.files.push(...newFiles);
+        await chatSession.save();
+
+        // Success Response 
+        return res.status(200).json(
+            new ApiResponse(
+                200,
+                newFiles, 
+                "Documents added to session successfully."
+            )
+        );
+
+    } catch (error) {
+        // Rollback Cloudinary Uploads if anything fails (FastAPI or MongoDB)
+        if (uploadedCloudinaryFiles.length > 0) {
+            await rollbackCloudinaryUploads(uploadedCloudinaryFiles);
+        }
+        throw error;
+    } finally {
+        // Delete Temporary Multer Files
+        if (req.files) {
+            deleteTempFiles(req.files);
+        }
+    }
+});
