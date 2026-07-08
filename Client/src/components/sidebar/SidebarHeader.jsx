@@ -5,7 +5,7 @@ const SidebarHeader = ({collapsed,toggleSidebar,}) => {
     return (
         <div className={` flex h-16 items-center border-transparent px-4 ${collapsed? "justify-center": "justify-between"} `}>
             <div className="flex items-center gap-3 overflow-hidden">
-                <img src="\assets\logo.svg"  alt="N" className="h-10 w-10 shrink-0 rounded-2xl bg-black object-contain shadow-sm" />
+                <img src="/logo.svg"  alt="N" className="h-10 w-10 shrink-0 rounded-2xl bg-black object-contain shadow-sm" />
                 {
                     !collapsed && 
                     (

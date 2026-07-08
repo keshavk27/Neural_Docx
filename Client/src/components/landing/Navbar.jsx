@@ -8,7 +8,7 @@ const Navbar = () => {
         <header className=" sticky top-0 z-50  backdrop-blur-lg ">
             <div className=" mx-auto flex h-18 max-w-7xl items-center justify-between px-6">                
                 <Link to="/" className=" flex  items-center  gap-3  text-3xl font-bold tracking-tight text-white ">
-                    <img src="\assets\logo.svg"  alt="N"  className="h-10 w-10 rounded-2xl" />
+                    <img src="/logo.svg"  alt="N"  className="h-10 w-10 rounded-2xl" />
                     <span>Neural Docx</span>
                 </Link>
 
