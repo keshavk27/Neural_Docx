@@ -23,29 +23,42 @@ const CreateChatModal = ({ open, onClose }) => {
         onClose();
     };
 
-    const handleCreateChat = async () => {
-
+const handleCreateChat = async () => {
         if (files.length === 0) return;
 
         try {
             setIsSubmitting(true);
+            
             const formData = new FormData();
             files.forEach((file) => {
                 formData.append("files", file);
             });
+            
             const chatSession = await dispatch(createChatSessionThunk(formData)).unwrap();
-            navigate(`/chat/${chatSession._id}`);
-            toast.success("Session created.")
-        }
-        catch (error) {
-            toast.error("Error uploading documents");
-            console.error(error);
-        }
-        finally {
+            
+            const sessionId = chatSession?._id || chatSession?.data?._id || chatSession?.id;
+            
+            if (!sessionId) {
+                console.error("Failed to find ID in server response:", chatSession);
+                toast.error("Critical Error: Missing Session ID.");
+                setIsSubmitting(false);
+                return;
+            }
+
             setFiles([]);
-            onClose();
             setIsSubmitting(false);
+            onClose();
+
+            navigate(`/chat/${sessionId}`);
+            toast.success("Session created.");
+
+        } catch (error) {
+            setFiles([]);
+            setIsSubmitting(false);
+            toast.error(typeof error === "string" ? error : "Error uploading documents");
+            console.error("Upload error:", error);
         }
+        
     };
 
     return (
