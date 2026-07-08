@@ -249,7 +249,7 @@ export const loginUser = asyncHandler(async (req, res) => {
     // Generate tokens
     const { accessToken, refreshToken } =await generateAccessAndRefreshTokens(user._id);
 
-    // Remove sensitive fields
+    // Remove  fields
     const loggedInUser = await User.findById(user._id).select(
         "-password -refreshToken"
     );

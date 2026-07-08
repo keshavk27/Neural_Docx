@@ -6,7 +6,7 @@ export const generateOTP = () => {
     return Math.floor(100000 + Math.random() * 900000).toString();
 };
 
-// Create (or replace) OTP for a user
+// Create/replace OTP for a user
 export const createOTP = async (userId) => {
 
     await OTP.deleteOne({ userId });

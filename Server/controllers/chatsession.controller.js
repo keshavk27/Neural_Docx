@@ -58,7 +58,7 @@ export const createChatSession = asyncHandler(
                 );
             }
 
-            // Prepare Chat Session Data
+            // Chat Session Data
             const files = uploadedCloudinaryFiles.map((file) => (
                 {
                     fileName: file.fileName,
@@ -69,7 +69,6 @@ export const createChatSession = asyncHandler(
             );
 
             // Create Chat Session
-            
             const title = path.parse(req.files[0].originalname).name || "Untitled Session";
 
             const chatSession =await ChatSession.create(
@@ -90,17 +89,14 @@ export const createChatSession = asyncHandler(
 
                 await uploadDocumentsToFastAPI(chatSession._id.toString(),req.files);
 
-            } catch (error) {
-
+            } 
+            catch (error) {
                 // Rollback Chat Session
                 try {
-
                     await ChatSession.findByIdAndDelete(chatSession._id);
-
                 } catch (rollbackError) {
                     console.error("ChatSession Rollback Error:",rollbackError.message);
                 }
-
                 throw error;
             }
 
@@ -108,10 +104,8 @@ export const createChatSession = asyncHandler(
             const createdChatSession =await ChatSession.findById(chatSession._id).populate("userId","fullname username avatar");
 
             if (!createdChatSession) {
-
                 // Rollback Cloudinary Uploads
                 await rollbackCloudinaryUploads(uploadedCloudinaryFiles);
-
                 throw new ApiError(
                     500,
                     "Failed to fetch created chat session."
@@ -129,15 +123,15 @@ export const createChatSession = asyncHandler(
                     )
                 );
 
-        } catch (error) {
-
+        } 
+        catch (error) {
             // Rollback Cloudinary Uploads
             if (uploadedCloudinaryFiles.length > 0) {
                 await rollbackCloudinaryUploads(uploadedCloudinaryFiles);
             }
             throw error;
         } finally {
-            // Delete Temporary Multer Files
+            // Delete Temporary Files
             deleteTempFiles(req.files);
         }
     }
@@ -286,23 +280,20 @@ export const addDocumentToSession = asyncHandler(async (req, res) => {
     
     const uploadedCloudinaryFiles = [];
     try {
-        // Validate Session ID
         const { sessionId } = req.params;
         if (!sessionId) {
             throw new ApiError(400, "Session ID is required.");
         }
 
-        // Validate Uploaded Files
         if (!req.files || req.files.length === 0) {
             throw new ApiError(400, "Please upload at least one document.");
         }
 
-        // Keep your existing file limit rules
+        // file limit 
         if (req.files.length > 3) {
             throw new ApiError(400, "Maximum 3 files are allowed per upload.");
         }
 
-        // Validate User & Session Existence
         const chatSession = await ChatSession.findOne({ 
             _id: sessionId, 
             userId: req.user._id 
@@ -312,7 +303,6 @@ export const addDocumentToSession = asyncHandler(async (req, res) => {
             throw new ApiError(404, "Chat session not found or unauthorized.");
         }
 
-        // Upload Files To Cloudinary
         for (const file of req.files) {
             const uploadedFile = await uploadFileToCloudinary(file.path);
             uploadedCloudinaryFiles.push(uploadedFile);
@@ -322,14 +312,13 @@ export const addDocumentToSession = asyncHandler(async (req, res) => {
             throw new ApiError(500, "Some files failed to upload to Cloudinary.");
         }
 
-        // Send to FastAPI Vector Store
         try {
             await uploadDocumentsToFastAPI(sessionId, req.files);
         } catch (error) {
             throw error; 
         }
 
-        // Prepare File Data for MongoDB
+        // File Data for MongoDB
         const newFiles = uploadedCloudinaryFiles.map((file) => ({
             fileName: file.fileName,
             fileType: file.fileType,
@@ -341,7 +330,6 @@ export const addDocumentToSession = asyncHandler(async (req, res) => {
         chatSession.files.push(...newFiles);
         await chatSession.save();
 
-        // Success Response 
         return res.status(200).json(
             new ApiResponse(
                 200,
@@ -351,13 +339,11 @@ export const addDocumentToSession = asyncHandler(async (req, res) => {
         );
 
     } catch (error) {
-        // Rollback Cloudinary Uploads if anything fails (FastAPI or MongoDB)
         if (uploadedCloudinaryFiles.length > 0) {
             await rollbackCloudinaryUploads(uploadedCloudinaryFiles);
         }
         throw error;
     } finally {
-        // Delete Temporary Multer Files
         if (req.files) {
             deleteTempFiles(req.files);
         }

@@ -207,7 +207,6 @@ export const getMessages = asyncHandler(async (req, res) => {
         );
 
         
-        // Success 
         return res.status(200).json(
             new ApiResponse(
                 200,

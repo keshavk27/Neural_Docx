@@ -102,7 +102,8 @@ const chatSessionSlice = createSlice({
             
             //addDocumentsToSession
             .addCase(uploadToExistingSessionThunk.fulfilled, (state, action) => {
-                if (state.selectedChatSession) {
+                if (state.selectedChatSession) 
+                {
                     if(!state.selectedChatSession.files)
                     {
                         state.selectedChatSession.files=[];
@@ -110,11 +111,11 @@ const chatSessionSlice = createSlice({
                     state.selectedChatSession.files.push(...action.payload);
                 }
                 
-                if (state.selectedChatSession) {
-                    const index = state.chatSessions.findIndex(
-                        (chat) => chat._id === state.selectedChatSession._id
-                    );
-                    if (index !== -1) {
+                if (state.selectedChatSession) 
+                {
+                    const index = state.chatSessions.findIndex((chat) => chat._id === state.selectedChatSession._id);
+                    if (index !== -1) 
+                    {
                         if(!state.chatSessions[index].files)
                         {
                             state.chatSessions[index].files=[];

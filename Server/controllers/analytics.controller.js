@@ -8,24 +8,17 @@ import ChatSession from "../models/chatsession.model.js";
 export const getAnalytics = asyncHandler(async (req, res) => {
 
     // Total registered users
-
     const totalUsers = await User.countDocuments();
 
-
     // Total questions asked (user messages)
-
-    const totalQuestions = await Message.countDocuments({
-        role: "user",
-    });
+    const totalQuestions = await Message.countDocuments({ role: "user",});
 
 
     // Total chat sessions
-
     const totalChatSessions = await ChatSession.countDocuments();
 
 
     // Total uploaded documents
-
     const documentResult = await ChatSession.aggregate([
         {
             $project: {

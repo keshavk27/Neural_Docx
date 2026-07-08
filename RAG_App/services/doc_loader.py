@@ -30,7 +30,7 @@ def load_document(file_path: str):
 
         documents = loader.load()
 
-        # Enrich Metadata
+        # update Metadata
         filename = os.path.basename(file_path)
         for document in documents:
             document.metadata.setdefault(
