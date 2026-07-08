@@ -28,7 +28,7 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [logIndex, setLogIndex] = useState(0);
 
-  // Cycles the decorative pipeline log — purely cosmetic, no auth logic here
+  // decorative pipeline log
   useEffect(() => {
     const id = setInterval(() => {
       setLogIndex((i) => (i + 1) % PIPELINE_LOG.length);
@@ -39,15 +39,17 @@ const Register = () => {
   // Register Submit
   const onSubmit = async (data) => {
     const result = await dispatch(registerThunk(data));
-    if (registerThunk.fulfilled.match(result)) {
+    if (registerThunk.fulfilled.match(result)) 
+    {
       toast.success("OTP sent successfully.");
       navigate("/verify-otp", { state: { email: data.email } });
     }
   };
 
-  // Show Backend Errors
+  // Backend Errors
   useEffect(() => {
-    if (error) {
+    if (error) 
+    {
       toast.error(error);
       dispatch(clearAuthError());
     }
@@ -57,26 +59,15 @@ const Register = () => {
     <div className="fixed inset-0 flex overflow-y-auto bg-[#0B0E14] text-[#E9ECF3]">
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
-
         @keyframes dv-beam-move { 0% { transform: translateY(-10px);} 100% { transform: translateY(150px);} }
         @keyframes dv-node-pulse { 0%,100% { opacity:.45; transform: translateY(0);} 50% { opacity:1; transform: translateY(-3px);} }
-        @keyframes dv-log-fade { from { opacity:0; transform: translateY(3px);} to { opacity:1; transform: translateY(0);} }
-        .dv-beam { animation: dv-beam-move 4.5s linear infinite; }
-        .dv-node { animation: dv-node-pulse 3s ease-in-out infinite; }
-        .dv-log-text { animation: dv-log-fade .4s ease; }
-        @media (prefers-reduced-motion: reduce) {
-          .dv-beam, .dv-node, .dv-log-text { animation: none !important; }
-        }
-      `}</style>
+        @keyframes dv-log-fade { from { opacity:0; transform: translateY(3px);} to { opacity:1; transform: translateY(0);} }.dv-beam { animation: dv-beam-move 4.5s linear infinite; }.dv-node { animation: dv-node-pulse 3s ease-in-out infinite; }.dv-log-text { animation: dv-log-fade .4s ease; }
+        @media (prefers-reduced-motion: reduce) {.dv-beam, .dv-node, .dv-log-text { animation: none !important; }}
+     `}</style>
 
-      {/* Visual panel */}
       <div
         className="relative hidden md:flex flex-1 flex-col justify-between overflow-hidden p-12 bg-[#0D1119]"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle at 28% 22%, rgba(79,217,197,0.14), transparent 60%), radial-gradient(circle at 82% 78%, rgba(232,165,82,0.08), transparent 55%)",
-        }}
-      >
+        style={{ backgroundImage: "radial-gradient(circle at 28% 22%, rgba(79,217,197,0.14), transparent 60%), radial-gradient(circle at 82% 78%, rgba(232,165,82,0.08), transparent 55%)", }}>
         <div>
           <div className="text-4xl font-semibold tracking-tight" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
             Neural Docx
@@ -130,10 +121,7 @@ const Register = () => {
           </svg>
         </div>
 
-        <div
-          className="flex items-baseline gap-2 text-[13px] text-[#97A1B8]"
-          style={{ fontFamily: "'IBM Plex Mono', monospace" }}
-        >
+        <div className="flex items-baseline gap-2 text-[13px] text-[#97A1B8]" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
           <span className="text-[#4FD9C5]">$</span>
           <span key={logIndex} className="dv-log-text">
             {PIPELINE_LOG[logIndex]}
@@ -141,7 +129,6 @@ const Register = () => {
         </div>
       </div>
 
-      {/* Form panel */}
       <div className="flex flex-1 items-center justify-center p-8">
         <div className="w-full max-w-100 rounded-2xl border border-[#242B3D] bg-[#131722] p-10 shadow-[0_20px_50px_rgba(0,0,0,0.35)] my-8">
           <h1 className="mb-1 text-2xl font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
@@ -150,83 +137,42 @@ const Register = () => {
           <p className="mb-7 text-sm text-[#97A1B8]">Create an account to start chatting with your documents.</p>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-            {/* Full Name */}
             <div>
               <label className="mb-2 block font-medium text-sm text-[#97A1B8]">Full Name</label>
-
               <div className="flex h-11 items-center gap-2 rounded-lg border border-[#242B3D] bg-[#1A1F2C] px-3 focus-within:border-[#4FD9C5]">
                 <User size={16} className="shrink-0 text-[#97A1B8]" />
-                <input
-                  type="text"
-                  placeholder="Enter your full name"
-                  className="w-full min-w-0 bg-transparent text-sm text-[#E9ECF3] outline-none placeholder-[#565F75]"
-                  {...register("fullname", {
-                    required: "Full name is required.",
-                  })}
-                />
+                <input type="text" placeholder="Enter your full name" className="w-full min-w-0 bg-transparent text-sm text-[#E9ECF3] outline-none placeholder-[#565F75]" {...register("fullname", { required: "Full name is required.",})}/>
               </div>
 
               {errors.fullname && <p className="mt-1 text-sm text-[#E8697A]">{errors.fullname.message}</p>}
             </div>
 
-            {/* Username */}
             <div>
               <label className="mb-2 block font-medium text-sm text-[#97A1B8]">Username</label>
-
               <div className="flex h-11 items-center gap-2 rounded-lg border border-[#242B3D] bg-[#1A1F2C] px-3 focus-within:border-[#4FD9C5]">
                 <AtSign size={16} className="shrink-0 text-[#97A1B8]" />
-                <input
-                  type="text"
-                  placeholder="Enter your username"
-                  className="w-full min-w-0 bg-transparent text-sm text-[#E9ECF3] outline-none placeholder-[#565F75]"
-                  {...register("username", {
-                    required: "Username is required.",
-                  })}
-                />
+                <input type="text" placeholder="Enter your username" className="w-full min-w-0 bg-transparent text-sm text-[#E9ECF3] outline-none placeholder-[#565F75]" {...register("username", {  required: "Username is required.", })}/>
               </div>
 
               {errors.username && <p className="mt-1 text-sm text-[#E8697A]">{errors.username.message}</p>}
             </div>
 
-            {/* Email */}
             <div>
               <label className="mb-2 block font-medium text-sm text-[#97A1B8]">Email</label>
-
               <div className="flex h-11 items-center gap-2 rounded-lg border border-[#242B3D] bg-[#1A1F2C] px-3 focus-within:border-[#4FD9C5]">
                 <Mail size={16} className="shrink-0 text-[#97A1B8]" />
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  className="w-full min-w-0 bg-transparent text-sm text-[#E9ECF3] outline-none placeholder-[#565F75]"
-                  {...register("email", {
-                    required: "Email is required.",
-                  })}
-                />
+                <input type="email" placeholder="Enter your email" className="w-full min-w-0 bg-transparent text-sm text-[#E9ECF3] outline-none placeholder-[#565F75]"{...register("email", { required: "Email is required.", })} />
               </div>
 
               {errors.email && <p className="mt-1 text-sm text-[#E8697A]">{errors.email.message}</p>}
             </div>
 
-            {/* Password */}
             <div>
               <label className="mb-2 block font-medium text-sm text-[#97A1B8]">Password</label>
-
               <div className="flex h-11 items-center gap-2 rounded-lg border border-[#242B3D] bg-[#1A1F2C] px-3 focus-within:border-[#4FD9C5]">
                 <Lock size={16} className="shrink-0 text-[#97A1B8]" />
-                <input
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Enter your password"
-                  className="w-full min-w-0 bg-transparent text-sm text-[#E9ECF3] outline-none placeholder-[#565F75]"
-                  {...register("password", {
-                    required: "Password is required.",
-                  })}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((s) => !s)}
-                  className="shrink-0 text-[#97A1B8] hover:text-[#E9ECF3]"
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                >
+                <input type={showPassword ? "text" : "password"} placeholder="Enter your password" className="w-full min-w-0 bg-transparent text-sm text-[#E9ECF3] outline-none placeholder-[#565F75]" {...register("password", {  required: "Password is required.",})} />
+                <button type="button" onClick={() => setShowPassword((s) => !s)} className="shrink-0 text-[#97A1B8] hover:text-[#E9ECF3]" aria-label={showPassword ? "Hide password" : "Show password"}>
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
@@ -234,24 +180,22 @@ const Register = () => {
               {errors.password && <p className="mt-1 text-sm text-[#E8697A]">{errors.password.message}</p>}
             </div>
 
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#4FD9C5] py-3 font-semibold text-[#06120F] transition hover:-translate-y-px disabled:cursor-not-allowed disabled:opacity-70"
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 size={16} className="animate-spin" /> Creating Account...
-                </>
-              ) : (
-                <>
-                  Register <ArrowRight size={16} />
-                </>
-              )}
+            <button type="submit" disabled={isLoading} className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#4FD9C5] py-3 font-semibold text-[#06120F] transition hover:-translate-y-px disabled:cursor-not-allowed disabled:opacity-70">
+              {
+                isLoading ? 
+                (
+                  <>
+                    <Loader2 size={16} className="animate-spin" /> Creating Account...
+                  </>
+                ) : 
+                (
+                  <>
+                    Register <ArrowRight size={16} />
+                  </>
+                )
+              }
             </button>
           </form>
-
           <p className="mt-6 text-center text-sm text-[#97A1B8]">
             Already have an account?
             <Link to="/login" className="ml-2 font-semibold text-[#4FD9C5] hover:underline">

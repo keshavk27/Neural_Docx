@@ -15,59 +15,29 @@ const UploadedDocuments = ({ files = [] }) => {
     if (files.length === 0) return null;
     return (
 
-        <div className="border-b border-neutral-800 bg-[#212121] px-6 py-4">
-            <div className="mx-auto max-w-4xl">
-                <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-neutral-400">
+        <div className="border-b border-[#242B3D] bg-[#0B0E14] px-6 py-0.5">
+            <div className="mx-auto max-w-6xl">
+                <h3 className="mb-0.5 text-xs font-semibold uppercase tracking-wide text-[#97A1B8]">
                     Uploaded Documents
                 </h3>
-                <div className="flex gap-3 overflow-x-auto pb-2">
+                <div className="flex gap-3 overflow-x-auto pb-1">
                     {files.map((file) => (
-                        <div
-                            key={file._id}
-                            onClick={() => window.open(file.cloudinaryUrl, "_blank")}
-                            className="
-                                w-56
-                                shrink-0
-                                cursor-pointer
-                                rounded-xl
-                                border
-                                border-neutral-700
-                                bg-[#2B2B2B]
-                                p-3
-                                transition-all
-                                duration-200
-                                hover:-translate-y-0.5
-                                hover:border-neutral-500
-                                hover:bg-[#333333]
-                                hover:shadow-lg
-                            "
-                        >
+                        <div key={file._id} onClick={() => window.open(file.cloudinaryUrl, "_blank")} className="  w-48 shrink-0 cursor-pointer rounded-xl  border border-[#242B3D] bg-[#131722]  p-2.5 transition-all duration-200 hover:-translate-y-0.5 hover:border-[#4FD9C5] hover:bg-[#1A1F2C] hover:shadow-lg " >
 
-                            {/* Top */}
-                            <div className="flex items-start justify-between">
-                                <div className="flex items-center gap-3">
-                                    <FileText  size={24}  className="text-blue-400 shrink-0"/>
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2.5">
+                                    <FileText size={20} className="shrink-0 text-[#4FD9C5]"/>
                                     <div className="min-w-0">
-                                        <p title={file.fileName} className="truncate text-sm font-medium text-white" >
+                                        <p title={file.fileName} className="truncate text-xs font-medium text-[#E9ECF3]" >
                                             {file.fileName}
                                         </p>
-                                        <p className="text-xs text-neutral-500">
+                                        <p className="text-[10px] text-[#565F75]">
                                             {file.fileType.toUpperCase()}
                                         </p>
                                     </div>
                                 </div>
-                                <button onClick={(e) =>  handleDownload(e, file) }
-                                    className="
-                                        rounded-md
-                                        p-2
-                                        text-neutral-400
-                                        transition
-                                        hover:bg-neutral-700
-                                        hover:text-white
-                                    "
-                                    title="Download"
-                                >
-                                    <Download size={16} />
+                                <button onClick={(e) => handleDownload(e, file)} className=" rounded-md p-1.5 text-[#97A1B8] transition hover:bg-[#242B3D] hover:text-[#E9ECF3] " title="Download" >
+                                    <Download size={14} />
                                 </button>
                             </div>
                         </div>

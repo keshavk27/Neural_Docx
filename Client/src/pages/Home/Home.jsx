@@ -8,33 +8,12 @@ const Home = () => {
     return (
 
         <div className="bg-[#121212] text-white">
-
-            {/* Hero Section */}
-
             <Hero />
-
-
-
-            {/* Analytics */}
-
             <Analytics />
-
-
-
-            {/* Features */}
-
             <Features />
-
-
-
-            {/* Call To Action */}
-
             <CTA />
-
         </div>
-
     );
-
 };
 
 export default Home;

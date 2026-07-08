@@ -15,6 +15,7 @@ const PIPELINE_LOG = [
 ];
 
 const Login = () => {
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -24,7 +25,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [logIndex, setLogIndex] = useState(0);
 
-  // Cycles the decorative pipeline log (decorative only)
+  //decorative pipeline log 
   useEffect(() => {
     const id = setInterval(() => {
       setLogIndex((i) => (i + 1) % PIPELINE_LOG.length);
@@ -35,9 +36,11 @@ const Login = () => {
   // Login Submit
   const onSubmit = async (data) => {
     const result = await dispatch(loginThunk(data));
-    if (loginThunk.fulfilled.match(result)) {
+    if (loginThunk.fulfilled.match(result)) 
+    {
       const profileResult = await dispatch(getProfileThunk());
-      if (getProfileThunk.fulfilled.match(profileResult)) {
+      if (getProfileThunk.fulfilled.match(profileResult)) 
+      {
         toast.success("Login successful.");
         navigate("/chat");
       }
@@ -46,7 +49,8 @@ const Login = () => {
 
   // Show Backend Errors
   useEffect(() => {
-    if (error) {
+    if (error) 
+    {
       toast.error(error);
       dispatch(clearAuthError());
     }
@@ -63,26 +67,13 @@ const Login = () => {
     <div className="fixed inset-0 flex overflow-y-auto bg-[#0B0E14] text-[#E9ECF3]">
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
-
         @keyframes dv-beam-move { 0% { transform: translateY(-10px);} 100% { transform: translateY(150px);} }
         @keyframes dv-node-pulse { 0%,100% { opacity:.45; transform: translateY(0);} 50% { opacity:1; transform: translateY(-3px);} }
-        @keyframes dv-log-fade { from { opacity:0; transform: translateY(3px);} to { opacity:1; transform: translateY(0);} }
-        .dv-beam { animation: dv-beam-move 4.5s linear infinite; }
-        .dv-node { animation: dv-node-pulse 3s ease-in-out infinite; }
-        .dv-log-text { animation: dv-log-fade .4s ease; }
-        @media (prefers-reduced-motion: reduce) {
-          .dv-beam, .dv-node, .dv-log-text { animation: none !important; }
-        }
+        @keyframes dv-log-fade { from { opacity:0; transform: translateY(3px);} to { opacity:1; transform: translateY(0);} }.dv-beam { animation: dv-beam-move 4.5s linear infinite; }.dv-node { animation: dv-node-pulse 3s ease-in-out infinite; }.dv-log-text { animation: dv-log-fade .4s ease; }
+        @media (prefers-reduced-motion: reduce) {.dv-beam, .dv-node, .dv-log-text { animation: none !important; }}
       `}</style>
 
-      {/* Visual panel */}
-      <div
-        className="relative hidden md:flex flex-1 flex-col justify-between overflow-hidden p-12 bg-[#0D1119]"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle at 28% 22%, rgba(79,217,197,0.14), transparent 60%), radial-gradient(circle at 82% 78%, rgba(232,165,82,0.08), transparent 55%)",
-        }}
-      >
+      <div className="relative hidden md:flex flex-1 flex-col justify-between overflow-hidden p-12 bg-[#0D1119]" style={{ backgroundImage: "radial-gradient(circle at 28% 22%, rgba(79,217,197,0.14), transparent 60%), radial-gradient(circle at 82% 78%, rgba(232,165,82,0.08), transparent 55%)",}}>
         <div>
           <div className="text-4xl font-semibold tracking-tight" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
             Neural Docx
@@ -136,10 +127,7 @@ const Login = () => {
           </svg>
         </div>
 
-        <div
-          className="flex items-baseline gap-2 text-[13px] text-[#97A1B8]"
-          style={{ fontFamily: "'IBM Plex Mono', monospace" }}
-        >
+        <div className="flex items-baseline gap-2 text-[13px] text-[#97A1B8]" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
           <span className="text-[#4FD9C5]">$</span>
           <span key={logIndex} className="dv-log-text">
             {PIPELINE_LOG[logIndex]}
@@ -147,7 +135,7 @@ const Login = () => {
         </div>
       </div>
 
-      {/* Form panel */}
+      
       <div className="flex flex-1 items-center justify-center p-8">
         <div className="w-full max-w-100 rounded-2xl border border-[#242B3D] bg-[#131722] p-10 shadow-[0_20px_50px_rgba(0,0,0,0.35)]">
           <h1 className="mb-1 text-2xl font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
@@ -156,45 +144,23 @@ const Login = () => {
           <p className="mb-7 text-sm text-[#97A1B8]">Sign in to keep chatting with your documents.</p>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-            {/* Email */}
             <div>
               <label className="mb-2 block font-medium text-sm text-[#97A1B8]">Email</label>
-
               <div className="flex h-11 items-center gap-2 rounded-lg border border-[#242B3D] bg-[#1A1F2C] px-3 focus-within:border-[#4FD9C5]">
                 <Mail size={16} className="shrink-0 text-[#97A1B8]" />
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  className="w-full min-w-0 bg-transparent text-sm text-[#E9ECF3] outline-none placeholder-[#565F75]"
-                  {...register("email", {
-                    required: "Email is required.",
-                  })}
-                />
+                <input type="email" placeholder="Enter your email" className="w-full min-w-0 bg-transparent text-sm text-[#E9ECF3] outline-none placeholder-[#565F75]"{...register("email", { required: "Email is required.",})}/>
               </div>
 
               {errors.email && <p className="mt-1 text-sm text-[#E8697A]">{errors.email.message}</p>}
             </div>
 
-            {/* Password */}
             <div>
               <label className="mb-2 block font-medium text-sm text-[#97A1B8]">Password</label>
 
               <div className="flex h-11 items-center gap-2 rounded-lg border border-[#242B3D] bg-[#1A1F2C] px-3 focus-within:border-[#4FD9C5]">
                 <Lock size={16} className="shrink-0 text-[#97A1B8]" />
-                <input
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Enter your password"
-                  className="w-full min-w-0 bg-transparent text-sm text-[#E9ECF3] outline-none placeholder-[#565F75]"
-                  {...register("password", {
-                    required: "Password is required.",
-                  })}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((s) => !s)}
-                  className="shrink-0 text-[#97A1B8] hover:text-[#E9ECF3]"
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                >
+                <input type={showPassword ? "text" : "password"} placeholder="Enter your password" className="w-full min-w-0 bg-transparent text-sm text-[#E9ECF3] outline-none placeholder-[#565F75]"{...register("password", { required: "Password is required.", })}/>
+                <button type="button" onClick={() => setShowPassword((s) => !s)} className="shrink-0 text-[#97A1B8] hover:text-[#E9ECF3]" aria-label={showPassword ? "Hide password" : "Show password"}>
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
@@ -202,21 +168,20 @@ const Login = () => {
               {errors.password && <p className="mt-1 text-sm text-[#E8697A]">{errors.password.message}</p>}
             </div>
 
-            {/* Button */}
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#4FD9C5] py-3 font-semibold text-[#06120F] transition hover:-translate-y-px disabled:cursor-not-allowed disabled:opacity-70"
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 size={16} className="animate-spin" /> Logging In...
-                </>
-              ) : (
-                <>
-                  Login <ArrowRight size={16} />
-                </>
-              )}
+            <button type="submit" disabled={isLoading} className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#4FD9C5] py-3 font-semibold text-[#06120F] transition hover:-translate-y-px disabled:cursor-not-allowed disabled:opacity-70">
+              {
+                  isLoading ? 
+                  (
+                    <>
+                      <Loader2 size={16} className="animate-spin" /> Logging In...
+                    </>
+                  ) : 
+                  (
+                    <>
+                      Login <ArrowRight size={16} />
+                    </>
+                  )
+              }
             </button>
           </form>
 

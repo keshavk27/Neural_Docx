@@ -15,11 +15,10 @@ const ChatWindow = ({sessionId}) => {
     }, [messages, isSending]);
 
     
-
     if (!isLoading && messages.length === 0) 
     {
         return (
-            <div className="flex h-full items-center justify-center text-neutral-500">
+            <div className="flex h-full items-center justify-center text-[#97A1B8]">
                 Start the conversation by asking a question.
             </div>
         );
@@ -28,19 +27,21 @@ const ChatWindow = ({sessionId}) => {
     if (isLoading) 
     {
         return (
-            <div className="flex h-full items-center justify-center text-neutral-400">
+            <div className="flex h-full items-center justify-center text-[#97A1B8]">
                 Loading conversation...
             </div>
         );
     }
+    
     return (
-        <div className="flex h-full flex-col overflow-hidden">
+        <div className="flex h-full flex-col overflow-hidden bg-[#0B0E14]">
             <UploadedDocuments files={selectedChatSession?.files || []} />
-            <div className=" flex-1 overflow-y-auto px-6  py-8 " >
-                <div className="mx-auto max-w-4xl space-y-6">
+            <div className=" flex-1 overflow-y-auto px-6 py-8" >
+                <div className="mx-auto max-w-5xl space-y-6">
                     {
-                        messages.map((message) => (
-                            <ChatMessage key={message._id} message={message}/>
+                        messages.map((message) => 
+                        (
+                            <ChatMessage key={message._id} message={message} sessionId={sessionId}/>
                         ))
                     }
                     {isSending && (<TypingIndicator />)}

@@ -19,10 +19,7 @@ const AppRoutes = () => {
     return (
         <Routes>
             <Route element={<HomeLayout />}>
-                <Route
-                    path="/"
-                    element={<Home />}
-                />
+                <Route path="/" element={<Home />}/>
             </Route>
 
             <Route element={<PublicRoute />}>
@@ -38,15 +35,10 @@ const AppRoutes = () => {
                 <Route element={<DashboardLayout />}>
                     <Route path="/chat" element={<Dashboard />}/>
                     <Route path="/chat/:sessionId" element={<Dashboard />}/>
-
                 </Route>
             </Route>
 
-
-            <Route
-                path="*"
-                element={<NotFound />}
-            />
+            <Route path="*" element={<NotFound />} />
 
         </Routes>
     );
