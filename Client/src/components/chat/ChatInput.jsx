@@ -4,7 +4,7 @@ import TextareaAutosize from "react-textarea-autosize";
 import { ArrowUp, Paperclip, Loader2, FilePlus } from "lucide-react";
 import { sendMessageThunk } from "../../features/message/messageThunk.js";
 import { addUserMessage, markMessageFailed } from "../../features/message/messageSlice.js";
-import { uploadToExistingSessionThunk } from "../../features/chatSession/chatSessionThunk.js";
+import { uploadToExistingSessionThunk } from "../../features/chatsession/chatSessionThunk.js";
 
 const ChatInput = ({ sessionId }) => {
     const dispatch = useDispatch();
