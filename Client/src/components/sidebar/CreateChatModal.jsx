@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import FileDropzone from "../UI/FileDropzone.jsx";
 import SelectedFileList from "../UI/SelectedFileList.jsx";
-import { createChatSessionThunk } from "../../features/chatSession/chatSessionThunk.js";
+import { createChatSessionThunk } from "../../features/chatsession/chatSessionThunk.js";
 
 const CreateChatModal = ({ open, onClose }) => {
 

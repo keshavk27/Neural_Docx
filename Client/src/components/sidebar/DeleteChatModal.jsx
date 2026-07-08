@@ -3,7 +3,7 @@ import { Trash2, X, Loader2 } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
-import { deleteChatSessionThunk } from "../../features/chatSession/chatSessionThunk.js";
+import { deleteChatSessionThunk } from "../../features/chatsession/chatSessionThunk.js";
 
 const DeleteChatModal = ({ open, onClose, chatSession }) => {
 
