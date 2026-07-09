@@ -4,15 +4,14 @@ import fs from "fs";
 
 import { ApiError } from "../utils/apiError.js";
 
-const FASTAPI_BASE_URL =process.env.FASTAPI_URL || "http://localhost:8001";
+const FASTAPI_BASE_URL = process.env.FASTAPI_URL || "http://localhost:8001";
 
+const FASTAPI_INTERNAL_SECRET = process.env.FASTAPI_INTERNAL_SECRET || "local_dev_secret_123";
 
 // Upload documents to FastAPI
-export const uploadDocumentsToFastAPI = async (sessionId,files) => {
+export const uploadDocumentsToFastAPI = async (sessionId, files) => {
     try {
-
         const formData = new FormData();
-
         formData.append("sessionId", sessionId);
 
         for (const file of files) {
@@ -23,9 +22,14 @@ export const uploadDocumentsToFastAPI = async (sessionId,files) => {
             );
         }
 
-        const response = await axios.post(`${FASTAPI_BASE_URL}/api/v1/documents/upload`,formData,
+        const response = await axios.post(
+            `${FASTAPI_BASE_URL}/api/v1/documents/upload`,
+            formData,
             {
-                headers: formData.getHeaders(),
+                headers: {
+                    ...formData.getHeaders(), 
+                    "X-API-Key": FASTAPI_INTERNAL_SECRET 
+                },
                 maxBodyLength: Infinity,
                 maxContentLength: Infinity,
             }
@@ -34,57 +38,61 @@ export const uploadDocumentsToFastAPI = async (sessionId,files) => {
         return response.data;
 
     } catch (error) {
-
         throw new ApiError(
             error.response?.status || 500,
-            error.response?.data?.detail ||
-            "Failed to upload documents to FastAPI."
+            error.response?.data?.detail || "Failed to upload documents to FastAPI."
         );
     }
 };
 
 
-
 // Ask question
-export const askQuestionToFastAPI = async ({sessionId,question,history,}) => {
+export const askQuestionToFastAPI = async ({ sessionId, question, history }) => {
     try {
-
-        const response = await axios.post(`${FASTAPI_BASE_URL}/api/v1/chat/ask`,
+    
+        const response = await axios.post(
+            `${FASTAPI_BASE_URL}/api/v1/chat/ask`,
             {
                 sessionId,
                 question,
                 history,
+            },
+            {
+                headers: {
+                    "X-API-Key": FASTAPI_INTERNAL_SECRET
+                }
             }
         );
 
         return response.data;
 
     } catch (error) {
-
         throw new ApiError(
             error.response?.status || 500,
-            error.response?.data?.detail ||
-            "Failed to get response from FastAPI."
+            error.response?.data?.detail || "Failed to get response from FastAPI."
         );
     }
 };
 
 
-
 // Delete vector store
 export const deleteVectorStoreFromFastAPI = async (sessionId) => {
     try {
-
-        const response = await axios.delete(`${FASTAPI_BASE_URL}/api/v1/vector-store/${sessionId}`);
+        const response = await axios.delete(
+            `${FASTAPI_BASE_URL}/api/v1/vector-store/${sessionId}`,
+            {
+                headers: {
+                    "X-API-Key": FASTAPI_INTERNAL_SECRET
+                }
+            }
+        );
 
         return response.data;
 
     } catch (error) {
-
         throw new ApiError(
             error.response?.status || 500,
-            error.response?.data?.detail ||
-            "Failed to delete vector store."
+            error.response?.data?.detail || "Failed to delete vector store."
         );
     }
 };
