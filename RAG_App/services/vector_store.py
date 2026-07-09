@@ -20,9 +20,9 @@ CHUNK_OVERLAP = 200
 QDRANT_URL = os.getenv("QDRANT_URL")
 QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
 
-COLLECTION_NAME = os.getenv("QDRANT_COLLECTION","neural_docx_documents",)
+COLLECTION_NAME = os.getenv("QDRANT_COLLECTION","neural_docx_openai",)
 
-VECTOR_SIZE = int(os.getenv("EMBEDDING_DIMENSION", "384"))
+VECTOR_SIZE = int(os.getenv("EMBEDDING_DIMENSION", "3072"))
 
 
 # Client

@@ -32,6 +32,7 @@ export const uploadDocumentsToFastAPI = async (sessionId, files) => {
                 },
                 maxBodyLength: Infinity,
                 maxContentLength: Infinity,
+                timeout:60000
             }
         );
 
@@ -60,7 +61,8 @@ export const askQuestionToFastAPI = async ({ sessionId, question, history }) => 
             {
                 headers: {
                     "X-API-Key": FASTAPI_INTERNAL_SECRET
-                }
+                },
+                timeout:60000
             }
         );
 
@@ -83,7 +85,8 @@ export const deleteVectorStoreFromFastAPI = async (sessionId) => {
             {
                 headers: {
                     "X-API-Key": FASTAPI_INTERNAL_SECRET
-                }
+                },
+                timeout:60000
             }
         );
 

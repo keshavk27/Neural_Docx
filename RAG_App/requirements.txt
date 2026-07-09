@@ -6,13 +6,12 @@ python-multipart
 langchain
 langchain-community
 langchain-text-splitters
-langchain-huggingface
+langchain-openai
 langchain-groq
 langchain-qdrant
+openai
 
 qdrant-client
-
-sentence-transformers
 
 pypdf
 docx2txt
@@ -20,5 +19,4 @@ python-docx
 python-pptx
 openpyxl
 pandas
-unstructured
 lxml
