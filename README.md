@@ -1,7 +1,7 @@
 # Neural Docx
 
 <p align="center">
-  <img src="./assets/logo.png" alt="Neural Docx" width="140"/>
+  <img src="./public/logo.png" alt="Neural Docx" width="140"/>
 </p>
 
 <h3 align="center">
