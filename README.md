@@ -1,7 +1,7 @@
 # Neural Docx
 
 <p align="center">
-  <img src="/public/logo.svg" alt="Neural Docx" width="140"/>
+  <img src="./Client/public/logo.svg" alt="Neural Docx" width="140"/>
 </p>
 
 <h3 align="center">
@@ -105,7 +105,7 @@ The platform supports persistent chat sessions, conversation memory, multiple do
 
 # System Architecture
 
-```text
+```
                      User
                       │
                       ▼
@@ -132,6 +132,7 @@ The platform supports persistent chat sessions, conversation memory, multiple do
                                     │
                                     ▼
                                 Groq LLM
+```
 
 
 ---
