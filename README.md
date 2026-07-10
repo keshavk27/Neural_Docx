@@ -1,7 +1,7 @@
 # Neural Docx
 
 <p align="center">
-  <img src="./public/logo.svg" alt="Neural Docx" width="140"/>
+  <img src="/public/logo.svg" alt="Neural Docx" width="140"/>
 </p>
 
 <h3 align="center">
@@ -20,7 +20,6 @@ Upload documents, chat with them using Retrieval-Augmented Generation (RAG), and
 ![LangChain](https://img.shields.io/badge/LangChain-RAG-yellow)
 ![Qdrant](https://img.shields.io/badge/Qdrant-Vector_DB-red)
 ![MongoDB](https://img.shields.io/badge/MongoDB-Database-47A248?logo=mongodb)
-![License](https://img.shields.io/badge/License-MIT-blue)
 
 </p>
 
