@@ -241,7 +241,7 @@ The generated response is returned to the user and stored as part of the convers
 
 ### Backend
 
-- Vercel
+- Google Cloud Run
 
 ### AI Server
 
