@@ -7,7 +7,7 @@ const Footer = () => {
     const [copied, setCopied] = useState(false);
     const handleCopyEmail = (e) => {
         e.preventDefault();
-        navigator.clipboard.writeText("keshavkk812@gmail.com");
+        navigator.clipboard.writeText("neuraldocx.27@gmail.com");
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
     };
@@ -20,7 +20,7 @@ const Footer = () => {
                 </div>
 
                 <div className="text-center md:text-right">
-                    Developer Contact:{"keshavkk812@gmail.com"}
+                    Developer Contact:{" "}
                     <button onClick={handleCopyEmail} className="font-medium text-[#4FD9C5] transition hover:underline" title="Click to copy email address">
                         {copied ? "Copied to clipboard!" : "developer@neuraldocx.com"}
                     </button>

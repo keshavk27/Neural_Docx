@@ -239,7 +239,7 @@ The generated response is returned to the user and stored as part of the convers
 
 - Vercel
 
-### Backend
+### Express Backend
 
 - Google Cloud Run
 
@@ -324,40 +324,6 @@ Neural-Docx/
 
 ![AI Conversation](screenshots/chat1.png)
 ![AI Conversation](screenshots/chat2.png)
-
----
-
-# Installation
-
-Clone the repository
-
-```bash
-git clone https://github.com/keshavk27/Neural_Docx
-```
-
-Frontend
-
-```bash
-cd Client
-npm install
-npm run dev
-```
-
-Backend
-
-```bash
-cd Server
-npm install
-npm run dev
-```
-
-AI Server
-
-```bash
-cd RAG_App
-pip install -r requirements.txt
-uvicorn app:app --reload port ${PORT}
-```
 
 ---
 
