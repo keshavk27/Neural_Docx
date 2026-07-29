@@ -3,14 +3,12 @@ import { useSelector } from "react-redux";
 import {ArrowRight,Sparkles, CheckCircle2,} from "lucide-react";
 
 const features = [
-    "Chat with PDFs, DOCX, PPTX, CSV, TXT & Excel",
-    "Retrieval-Augmented Generation (RAG)",
+    "Study with PDFs, DOCX, PPTX, CSV, TXT & Excel",
     "Powered by GPT-5.5",
-    "Qdrant Vector Database",
     "Persistent Chat Sessions",
     "Fast Semantic Search",
     "Modern & Secure Architecture",
-    "Built with React, Node.js & FastAPI",
+    "Retrieval-Augmented Generation (RAG)"
 ];
 
 const Hero = () => {
@@ -55,9 +53,7 @@ const Hero = () => {
                                 </Link>
                             )
                         }
-                        <Link to="/login" className=" rounded-xl border border-neutral-700 px-6 py-3  font-medium text-white transition hover:bg-neutral-800 ">
-                            Login
-                        </Link>
+                        
                     </div>
                 </div>
                 <div className=" rounded-3xl border border-neutral-800 bg-[#1A1A1A] p-8 shadow-2xl ">
